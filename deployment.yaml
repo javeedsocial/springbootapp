@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: springbootapp
+  namespace: default # Change this if you have a different namespace
+  labels:
+    app: springbootapp
+spec:
+  replicas: 2 # You can adjust the number of replicas
+  selector:
+    matchLabels:
+      app: springbootapp
+  template:
+    metadata:
+      labels:
+        app: springbootapp
+    spec:
+      containers:
+      - name: springbootapp
+        image: javeedsocial/springbootapp:latest # Change to your Docker Hub image and tag
+        ports:
+        - containerPort: 8080
+        env:
+        - name: SPRING_PROFILES_ACTIVE
+          value: "prod" # Example of passing an environment variable
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: springbootapp-service
+  namespace: default
+  labels:
+    app: springbootapp
+spec:
+  type: LoadBalancer # Change to NodePort if you don't want a LoadBalancer
+  ports:
+  - port: 80
+    targetPort: 8080
+    protocol: TCP
+  selector:
+    app: springbootapp
